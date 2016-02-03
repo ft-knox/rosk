@@ -20,11 +20,20 @@
 
 #include <config.h>
 #include <stdio.h>
+#include <ncurses.h>
 
 int
 main (void)
 {
-	puts("rosk");
-	puts("This is " PACKAGE_STRING ".");
+	initscr(); // Start ncurses mode
+
+	printw("rosk\n");
+	printw("This is " PACKAGE_STRING ".");
+
+	refresh(); // Update the real screen
+
+	getch(); // wait for user input
+	
+	endwin(); // Stop nurses mode
 	return 0;
 }
