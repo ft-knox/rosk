@@ -21,19 +21,52 @@
 #include <config.h>
 #include <stdio.h>
 #include <ncurses.h>
+#include <string.h>
+
+char*
+stradd(const char* a, const char* b)
+{
+	size_t len = strlen(a) + strlen(b);
+	char *ret = (char*)malloc(len * sizeof(char) + 1);
+	return strcat(strcat(ret, a), b);
+}
+
+struct keycap {
+	int xpos;
+	int ypos;
+	char *value;
+	int selected;
+};
 
 int
 main (void)
 {
+	char *buffer[50];
+	char *print_buf;
+	int ch = NULL;
+	
 	initscr(); // Start ncurses mode
 
+	// Set up ncurses
+	noecho();
+	keypad(stdscr, TRUE);
+		
 	printw("rosk\n");
-	printw("This is " PACKAGE_STRING ".");
+	printw("This is " PACKAGE_STRING ".\n");
 
 	refresh(); // Update the real screen
 
-	getch(); // wait for user input
-	
+	ch = getch();
+	while (ch != KEY_F(1))
+		{
+			printw("%c",ch);
+			refresh();
+			ch = getch(); // wait for user input
+		}
+
+	// Tear down ncurses
+	echo();
+	keypad(stdscr, FALSE);
 	endwin(); // Stop nurses mode
 	return 0;
 }
