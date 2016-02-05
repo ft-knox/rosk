@@ -20,8 +20,8 @@
 
 #define _GNU_SOURCE
 
-#define KDB_SIZE 64
-#define KDB_KPERL 10
+#define KBD_SIZE 64
+#define KBD_KPERL 10
 
 #include <config.h>
 #include <stdio.h>
@@ -54,33 +54,54 @@ shuffle(int *array, size_t n)
 		}
 }
 
+void
+print_kdb(int *array, size_t n, int pos)
+{
+	if (n > 1)
+		{
+			size_t i;
+			for (i = 0; i < n - 1; i++) {
+				if (i == pos)
+					{
+						attron(A_BOLD);
+						printw("%c ",array[i]);
+						attroff(A_BOLD);
+					}
+				else
+					{
+						printw("%c ",array[i]);
+					}
+			}
+		}
+}
+
 int
 main (void)
 {
 	char buffer[50];
 	int length = 0;
 	int ch = NULL;
-	int kpos = 0;
 
 	//97981226590484957
 		
-	int keys[KDB_SIZE] = {97,98,99,100,101,102,103,104,105,106,107,108,
+	int keys[KBD_SIZE] = {97,98,99,100,101,102,103,104,105,106,107,108,
 	                      109,110,111,112,113,114,115,116,117,118,119,
 	                      120,121,122,65,66,67,68,69,70,71,72,73,74,76,
 	                      77,78,79,80,81,82,83,84,85,86,87,88,89,90,48,
 	                      49,50,51,52,53,54,55,56,57};
 	
-	size_t klen = KDB_SIZE;
-	const int KWIDTH = COLS / KDB_KPERL;
-	const int KHEIGHT = LINES / KDB_KPERL;
+	size_t klen = KBD_SIZE;
+	const int KWIDTH = COLS / KBD_KPERL;
+	const int KHEIGHT = LINES / KBD_KPERL;
 	
 	// Initialize random number generator
 	time_t t;
 	srand((unsigned) time(&t));
-	
+
 	// Initially shuffle keyboard
 	shuffle(keys, klen);
-
+	int kpos = rand() % KBD_SIZE;
+	
 	// Set up ncurses
 	initscr();
 	noecho();
@@ -91,6 +112,9 @@ main (void)
 	printw("rosk\n");
 	printw("This is " PACKAGE_STRING ".\n");
 
+	// Show the initial keyboard
+	print_kdb(keys, klen, kpos);
+	
 	refresh(); // Update the real screen
 
 	ch = getch();
@@ -98,16 +122,37 @@ main (void)
 		{
 			switch(ch) {
 			case KEY_UP:
-				kpos = kpos - KDB_KPERL;
+				kpos = kpos - KBD_KPERL;
+				refresh();
+				clear();
+				print_kdb(keys, klen, kpos);
 				break;
 			case KEY_DOWN:
-				kpos = kpos + KDB_KPERL;
+				kpos = kpos + KBD_KPERL;
+				refresh();
+				clear();
+				print_kdb(keys, klen, kpos);
 				break;
 			case KEY_LEFT:
 				kpos--;
+				refresh();
+				clear();
+				print_kdb(keys, klen, kpos);
 				break;
 			case KEY_RIGHT:
 				kpos++;
+				refresh();
+				clear();
+				print_kdb(keys, klen, kpos);
+				break;
+			case 32: // Space
+				sprintf(&buffer[length], "%c", keys[kpos % KBD_SIZE]);
+				length++;
+				kpos = rand() % KBD_SIZE;
+				shuffle(keys, klen);
+				refresh();
+				clear();
+				print_kdb(keys, klen, kpos);
 				break;
 			case 13: // Enter
 				refresh();
@@ -115,9 +160,7 @@ main (void)
 				printw("%s", buffer);
 				break;
 			default:
-				sprintf(&buffer[length], "%c", ch);
-				length++;
-				//printw("%d %s", length, buffer);
+				//printw("%d", ch);
 				break;
 			}
 			
