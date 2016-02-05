@@ -63,9 +63,11 @@ print_kdb(int *array, size_t n, int pos)
 			for (i = 0; i < n - 1; i++) {
 				if (i == pos)
 					{
+						attron(COLOR_PAIR(1));
 						attron(A_BOLD);
 						printw("%c ",array[i]);
 						attroff(A_BOLD);
+						attroff(COLOR_PAIR(1));
 					}
 				else
 					{
@@ -108,6 +110,8 @@ main (void)
 	raw();
 	nonl();
 	keypad(stdscr, TRUE);
+	start_color();
+	init_pair(1, COLOR_RED, COLOR_BLACK);
 		
 	printw("rosk\n");
 	printw("This is " PACKAGE_STRING ".\n");
