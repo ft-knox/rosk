@@ -21,12 +21,14 @@
 #define _GNU_SOURCE
 
 #define KDB_SIZE 64
+#define KDB_KPERL 10
 
 #include <config.h>
 #include <stdio.h>
 #include <ncurses.h>
 #include <string.h>
 #include <stdlib.h>
+#include <time.h>
 
 char*
 stradd(const char* a, const char* b)
@@ -69,7 +71,9 @@ main (void)
 	                      49,50,51,52,53,54,55,56,57};
 	
 	size_t klen = KDB_SIZE;
-
+	const int KWIDTH = COLS / KDB_KPERL;
+	const int KHEIGHT = LINES / KDB_KPERL;
+	
 	// Initialize random number generator
 	time_t t;
 	srand((unsigned) time(&t));
@@ -94,10 +98,10 @@ main (void)
 		{
 			switch(ch) {
 			case KEY_UP:
-				kpos = kpos - 10;
+				kpos = kpos - KDB_KPERL;
 				break;
 			case KEY_DOWN:
-				kpos = kpos + 10;
+				kpos = kpos + KDB_KPERL;
 				break;
 			case KEY_LEFT:
 				kpos--;
@@ -105,11 +109,12 @@ main (void)
 			case KEY_RIGHT:
 				kpos++;
 				break;
-			case KEY_ENTER:
+			case 13: // Enter
+				refresh();
+				clear();
 				printw("%s", buffer);
 				break;
 			default:
-				printw("%d",ch);
 				sprintf(&buffer[length], "%c", ch);
 				length++;
 				//printw("%d %s", length, buffer);
