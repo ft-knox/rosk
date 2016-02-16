@@ -103,7 +103,20 @@ main (void)
 	// Initially shuffle keyboard
 	shuffle(keys, klen);
 	int kpos = rand() % KBD_SIZE;
-	
+			
+	printf("\n" PACKAGE_STRING ".\n");
+	printf("Copyright (C) 2016  Ft. Knox <ftknox@riseup.net>\n\n\
+rosk is free software: you can redistribute it and/or modify\n\
+it under the terms of the GNU General Public License as published by\n\
+the Free Software Foundation, either version 3 of the License, or\n\
+(at your option) any later version.\n\n\
+rosk is distributed in the hope that it will be useful,\n\
+but WITHOUT ANY WARRANTY; without even the implied warranty of\n\
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n\
+GNU General Public License for more details.\n\n\
+You should have received a copy of the GNU General Public License\n\
+along with rosk.  If not, see <http://www.gnu.org/licenses/>.\n\n");
+
 	// Set up ncurses
 	initscr();
 	noecho();
@@ -112,9 +125,6 @@ main (void)
 	keypad(stdscr, TRUE);
 	start_color();
 	init_pair(1, COLOR_RED, COLOR_BLACK);
-		
-	printw("rosk\n");
-	printw("This is " PACKAGE_STRING ".\n");
 
 	// Show the initial keyboard
 	print_kdb(keys, klen, kpos);
