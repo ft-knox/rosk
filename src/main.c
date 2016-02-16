@@ -23,6 +23,9 @@
 #define KBD_SIZE 64
 #define KBD_KPERL 10
 
+#define MIN(X, Y) Y ^ ((X ^ Y) & -(X < Y))
+#define MAX(X, Y) X ^ ((X ^ Y) & -(X < Y))
+
 #include <config.h>
 #include <stdio.h>
 #include <ncurses.h>
@@ -136,7 +139,7 @@ along with rosk.  If not, see <http://www.gnu.org/licenses/>.\n\n");
 		{
 			switch(ch) {
 			case KEY_UP:
-				kpos = kpos - KBD_KPERL;
+				kpos = kpos - KBD_KPERL;				
 				refresh();
 				clear();
 				print_kdb(keys, klen, kpos);
@@ -149,12 +152,14 @@ along with rosk.  If not, see <http://www.gnu.org/licenses/>.\n\n");
 				break;
 			case KEY_LEFT:
 				kpos--;
+				kpos = MAX(0, kpos);
 				refresh();
 				clear();
 				print_kdb(keys, klen, kpos);
 				break;
 			case KEY_RIGHT:
 				kpos++;
+				kpos = MIN(kpos, (klen-2));
 				refresh();
 				clear();
 				print_kdb(keys, klen, kpos);
